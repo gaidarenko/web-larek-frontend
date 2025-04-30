@@ -12,4 +12,7 @@ export interface IProductList {
   items: IProduct[];
 }
 
+export type TProductId = {
+  id: string;
+}
 // export type iProductInfo = Pick<IProduct, 'id' | 'title'>;

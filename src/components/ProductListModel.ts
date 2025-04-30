@@ -26,4 +26,8 @@ export class ProductListModel implements IProductList {
   get total() {
     return this._total;
   }
+
+  getById(id: string): IProduct {
+    return this._items.find(item => item.id === id);
+  }
 }
