@@ -15,6 +15,15 @@ export class BasketModel {
     this.events.emit('basket:change');
   }
 
+  delete(id: string) {
+    this._items.delete(id);
+    this.events.emit('basket:change');
+  }
+
+  get items() {
+    return this._items;
+  }
+
   get count(): number {
     return this._items.size;
   }

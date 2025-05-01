@@ -13,6 +13,7 @@ export class Product {
   protected element: HTMLElement;
   protected events: IEvents;
   protected productId: string;
+  protected buttonDelete: HTMLButtonElement;
   protected button: HTMLButtonElement;
   protected title: HTMLElement;
   protected category: HTMLElement;
@@ -31,6 +32,14 @@ export class Product {
     this.price = this.element.querySelector('.card__price');
     this.category = this.element.querySelector('.card__category');
     this.button = this.element.querySelector('.card__button');
+    this.buttonDelete = this.element.querySelector('.basket__item-delete');
+
+    if (this.buttonDelete) {
+      this.buttonDelete.addEventListener('click', (evt) => {
+        evt.stopPropagation();
+        this.events.emit('product:delete', { id: this.productId });
+      });
+    }
 
     if (this.button) {
       this.button.addEventListener('click', (evt) => {
@@ -51,11 +60,18 @@ export class Product {
     }
 
     this.title.textContent = data.title;
-    this.category.textContent = data.category;
-    this.category.classList.add(styles[data.category]);
+
+    if (this.category) {
+      this.category.textContent = data.category;
+      this.category.classList.add(styles[data.category]);
+    }
+
     this.price.textContent = data.price ? `${data.price} синапсов` : 'Бесценно';
     this.productId = data.id;
-    this.image.src = data.image;
+
+    if (this.image) {
+      this.image.src = data.image;
+    }
 
     return this.element;
 }
