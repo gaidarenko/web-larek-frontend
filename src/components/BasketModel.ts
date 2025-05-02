@@ -20,6 +20,10 @@ export class BasketModel {
     this.events.emit('basket:change');
   }
 
+  clear() {
+    this._items.clear();
+  }
+
   get items() {
     return this._items;
   }

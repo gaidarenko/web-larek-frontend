@@ -15,4 +15,20 @@ export interface IProductList {
 export type TProductId = {
   id: string;
 }
-// export type iProductInfo = Pick<IProduct, 'id' | 'title'>;
+
+export interface IOrder {
+  payment: string;
+  email: string;
+  phone: string;
+  address: string;
+  total: number;
+  items: string[];
+}
+
+export type TOrderInfo = Pick<IOrder, 'payment' | 'email' | 'phone' | 'address'>;
+
+export interface IOrderResult {
+  id?: string;
+  total?: number;
+  error?: string;
+}
