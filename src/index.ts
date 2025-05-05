@@ -10,10 +10,12 @@ import { LarekApi } from './components/LarekApi';
 import { Basket } from './components/Basket';
 import { BasketList } from './components/BasketList';
 import { BasketItem } from './components/BasketItem';
+import { OrderForm } from './components/OrderForm';
+import { ContactsForm } from './components/ContactsForm';
 import { Success } from './components/Success';
 import { API_URL, CDN_URL } from "./utils/constants";
 import { Product } from './components/Product';
-import { TProductId, IProduct, IOrder } from './types';
+import { TProductId, IProduct, IOrder, TStringValue } from './types';
 
 const events = new EventEmitter();
 const productListModel = new ProductListModel(events);
@@ -32,6 +34,8 @@ events.onAll(({ eventName, data }) => {
 })
 
 const success = new Success(document.querySelector('#success'), events);
+const orderForm = new OrderForm(document.querySelector('#order'), events);
+const contactsForm = new ContactsForm(document.querySelector('#contacts'), events);
 const basket = new Basket(document.querySelector('.header__basket'), events);
 const basketList = new BasketList(basketTemplate, events);
 const gallery = new ProductGallery(document.querySelector('.gallery'));
@@ -76,8 +80,52 @@ events.on('basket:click', (data) => {
   modal.open();  
 });
 
-events.on('basketlist:buy', (data) => {
+events.on('basket:order', (data) => {
+  orderInfoModel.clear();
 
+  modal.content = orderForm.render({ valid: false });
+});
+
+events.on('orderform:cash', (data) => {
+  orderInfoModel.payment = 'cash';
+
+  const valid = orderInfoModel.isAddressValid() && orderInfoModel.isPaymentValid();
+  orderForm.render({ valid });
+});
+
+events.on('orderform:card', (data) => {
+  orderInfoModel.payment = 'online';
+
+  const valid = orderInfoModel.isAddressValid() && orderInfoModel.isPaymentValid();
+  orderForm.render({ valid });
+});
+
+events.on('orderform:address', (data: TStringValue) => {
+  orderInfoModel.address = data.value;
+
+  const valid = orderInfoModel.isAddressValid() && orderInfoModel.isPaymentValid();
+  orderForm.render({ valid });
+});
+
+events.on('orderform:next', (data) => {
+  modal.content = contactsForm.render({ valid: false });
+});
+
+events.on('contactsform:phone', (data: TStringValue) => {
+  orderInfoModel.phone = data.value;
+
+  const valid = orderInfoModel.isPhoneValid() && orderInfoModel.isEmailValid();
+  contactsForm.render({ valid });
+});
+
+events.on('contactsform:email', (data: TStringValue) => {
+  orderInfoModel.email = data.value;
+  
+  const valid = orderInfoModel.isPhoneValid() && orderInfoModel.isEmailValid();
+  contactsForm.render({ valid });
+});
+  
+events.on('contactsform:pay', (data) => {
   const order: IOrder = {
     payment: orderInfoModel.payment,
     email: orderInfoModel.email,
@@ -100,12 +148,13 @@ events.on('basketlist:buy', (data) => {
   api.orderProducts(order)
     .then(result => {
       console.log(result);
+      basketModel.clear();
+      orderInfoModel.clear();
       modal.content = success.render(result.total);
     })
     .catch(err => {
       console.error(err);
     });
-  
 });
 
 events.on('order:success', (data) => {

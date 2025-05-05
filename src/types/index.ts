@@ -8,7 +8,6 @@ export interface IProduct {
 }
 
 export interface IProductList {
-  total: number;
   items: IProduct[];
 }
 
@@ -31,4 +30,12 @@ export interface IOrderResult {
   id?: string;
   total?: number;
   error?: string;
+}
+
+export type TStringValue = {
+  value: string;
+}
+
+export type TFormState = {
+  valid: boolean;
 }

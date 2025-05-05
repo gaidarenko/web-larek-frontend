@@ -7,10 +7,14 @@ export class OrderInfoModel implements TOrderInfo {
   protected _phone: string;
 
   constructor() {
-    this._payment = "online";
-    this._email = "test@test.ru";
-    this._phone = "+71234567890";
-    this._address = "moscow lubianka 1";
+    this.clear();
+  }
+
+  clear() {
+    this._email = null;
+    this._address = null;
+    this._payment = null;
+    this._phone = null;
   }
 
   get payment() {
@@ -21,12 +25,20 @@ export class OrderInfoModel implements TOrderInfo {
     this._payment = value;
   }
 
+  isPaymentValid(): boolean {
+    return !!this._payment;
+  }
+
   get phone() {
     return this._phone;
   }
 
   set phone(value: string) {
     this._phone = value;
+  }
+
+  isPhoneValid(): boolean {
+    return !!this._phone;
   }
 
   get email() {
@@ -37,11 +49,19 @@ export class OrderInfoModel implements TOrderInfo {
     this._email = value;
   }
 
+  isEmailValid(): boolean {
+    return !!this._email;
+  }
+
   get address() {
     return this._address;
   }
 
   set address(value: string) {
     this._address = value;
+  }
+
+  isAddressValid(): boolean {
+    return !!this._address;
   }
 }

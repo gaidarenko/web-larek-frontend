@@ -1,4 +1,3 @@
-// import { IProduct, IProductList } from "../types";
 import { IEvents } from "./base/events";
 
 export class BasketModel {

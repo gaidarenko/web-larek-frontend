@@ -19,12 +19,12 @@ export class BasketList {
     if (this.button) {
       this.button.addEventListener('click', (evt) => {
         evt.stopPropagation();
-        this.events.emit('basketlist:buy');
+        this.events.emit('basket:order');
       });
     }
   }
 
-  render(items: HTMLElement[], totalPrice: number) {  //data: IProduct
+  render(items: HTMLElement[], totalPrice: number) {
     this.price.textContent = `${totalPrice.toString()} синапсов`;
     this.list.replaceChildren(...items);
 
