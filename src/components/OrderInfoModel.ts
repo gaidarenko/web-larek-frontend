@@ -1,12 +1,15 @@
 import { TOrderInfo } from "../types";
+import { IEvents } from "./base/events";
 
 export class OrderInfoModel implements TOrderInfo {
+  protected events: IEvents;
   protected _payment: string;
   protected _address: string;
   protected _email: string;
   protected _phone: string;
 
-  constructor() {
+  constructor(events: IEvents) {
+    this.events = events;
     this.clear();
   }
 
@@ -23,6 +26,7 @@ export class OrderInfoModel implements TOrderInfo {
 
   set payment(value: string) {
     this._payment = value;
+    this.events.emit('orderinfomodel:change');
   }
 
   isPaymentValid(): boolean {
@@ -35,6 +39,7 @@ export class OrderInfoModel implements TOrderInfo {
 
   set phone(value: string) {
     this._phone = value;
+    this.events.emit('orderinfomodel:change');
   }
 
   isPhoneValid(): boolean {
@@ -47,6 +52,7 @@ export class OrderInfoModel implements TOrderInfo {
 
   set email(value: string) {
     this._email = value;
+    this.events.emit('orderinfomodel:change');
   }
 
   isEmailValid(): boolean {
@@ -59,6 +65,7 @@ export class OrderInfoModel implements TOrderInfo {
 
   set address(value: string) {
     this._address = value;
+    this.events.emit('orderinfomodel:change');
   }
 
   isAddressValid(): boolean {

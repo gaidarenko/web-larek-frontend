@@ -45,7 +45,11 @@ export class Product {
     });
   }
 
-  render(data: IProduct) {
+  render(data: IProduct, canAdd?: boolean) {
+    if (this.button) {
+      this.button.disabled = !canAdd;
+    }
+
     if (this.text) {
         this.text.textContent = data.description;
     }

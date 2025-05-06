@@ -20,17 +20,11 @@ export class OrderForm {
     this.card.addEventListener('click', (evt) => {
       evt.stopPropagation();
 
-      this.cash.classList.remove('button_alt-active');
-      this.card.classList.add('button_alt-active');
-
       this.events.emit('orderform:card');
     });
   
     this.cash.addEventListener('click', (evt) => {
       evt.stopPropagation();
-
-      this.card.classList.remove('button_alt-active');
-      this.cash.classList.add('button_alt-active');
 
       this.events.emit('orderform:cash');
     });
@@ -55,9 +49,29 @@ export class OrderForm {
     this.submit.disabled = !value;
   }
 
-  render(state: TFormState) {
+  set payment(value: string) {
+    this.cash.classList.remove('button_alt-active');
+    this.card.classList.remove('button_alt-active');
+
+    if (value === 'online') {
+      this.card.classList.add('button_alt-active');
+    } else if (value === 'cash') {
+      this.cash.classList.add('button_alt-active');
+    }
+  }
+
+  clear() {
+    this.cash.classList.remove('button_alt-active');
+    this.card.classList.remove('button_alt-active');
+    this.address.value = "";
+  }
+
+  render(state: TFormState, payment: string) {
     const { valid } = state;
     this.valid = valid;
+
+    this.payment = payment;
+
     return this.element;
   }
 

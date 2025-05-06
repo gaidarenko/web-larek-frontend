@@ -21,6 +21,11 @@ export class BasketModel {
 
   clear() {
     this._items.clear();
+    this.events.emit('basket:change');
+  }
+
+  has(id: string): boolean {
+    return this._items.has(id);
   }
 
   get items() {

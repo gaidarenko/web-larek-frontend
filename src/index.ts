@@ -20,7 +20,7 @@ import { TProductId, IProduct, IOrder, TStringValue } from './types';
 const events = new EventEmitter();
 const productListModel = new ProductListModel(events);
 const basketModel = new BasketModel(events);
-const orderInfoModel = new OrderInfoModel();
+const orderInfoModel = new OrderInfoModel(events);
 
 const api = new LarekApi(CDN_URL, API_URL);
 const productTemplate: HTMLTemplateElement = document.querySelector('#card-catalog'); 
@@ -45,7 +45,6 @@ const modal = new Modal(document.querySelector('#modal-basket'));
 api.getProductList()
   .then(result => {
     productListModel.items = result;
-    console.log(result);
   })
   .catch(err => {
     console.error(err);
@@ -62,7 +61,10 @@ events.on('productlist:changed', (data) => {
 
 events.on('product:click', (data: TProductId) => {
   const product = new Product(productFullTemplate, events);
-  modal.content = product.render(productListModel.getById(data.id));
+  const productData = productListModel.getById(data.id);
+
+  // Кнопка "В корзину" доступна только если у продукта есть цена и он ранее не был добавлен в корзину
+  modal.content = product.render(productData, productData.price && !basketModel.has(data.id));
   modal.open();
 });
 
@@ -73,56 +75,68 @@ events.on('product:add', (data: TProductId) => {
 
 events.on('basket:change', (data) => {
   basket.counter = basketModel.count;
+
+  const products: HTMLElement[] = [];
+  let index: number = 1;
+  let totalPrice = 0;
+  
+  basketModel.items.forEach(item => {
+    const basketItem = new BasketItem(productBasketTemplate, events);
+    const product: IProduct = productListModel.getById(item);
+  
+    if (product.price) {
+      totalPrice += product.price;
+    }
+  
+    products.push(basketItem.render(product, index++));
+  });  
+  
+  basketList.render(products, totalPrice);
 });
 
 events.on('basket:click', (data) => {
-  setBasketListContent();
+  modal.content = basketList.render();
   modal.open();  
 });
 
 events.on('basket:order', (data) => {
   orderInfoModel.clear();
+  orderForm.clear();
 
-  modal.content = orderForm.render({ valid: false });
+  modal.content = orderForm.render({ valid: false }, '');
+});
+
+events.on('orderinfomodel:change', (data) => {
+  let valid = orderInfoModel.isAddressValid() && orderInfoModel.isPaymentValid();
+  orderForm.render({ valid }, orderInfoModel.payment);
+
+  valid = orderInfoModel.isPhoneValid() && orderInfoModel.isEmailValid();
+  contactsForm.render({ valid });
 });
 
 events.on('orderform:cash', (data) => {
   orderInfoModel.payment = 'cash';
-
-  const valid = orderInfoModel.isAddressValid() && orderInfoModel.isPaymentValid();
-  orderForm.render({ valid });
 });
 
 events.on('orderform:card', (data) => {
   orderInfoModel.payment = 'online';
-
-  const valid = orderInfoModel.isAddressValid() && orderInfoModel.isPaymentValid();
-  orderForm.render({ valid });
 });
 
 events.on('orderform:address', (data: TStringValue) => {
   orderInfoModel.address = data.value;
-
-  const valid = orderInfoModel.isAddressValid() && orderInfoModel.isPaymentValid();
-  orderForm.render({ valid });
 });
 
 events.on('orderform:next', (data) => {
+  contactsForm.clear();
   modal.content = contactsForm.render({ valid: false });
 });
 
 events.on('contactsform:phone', (data: TStringValue) => {
   orderInfoModel.phone = data.value;
-
-  const valid = orderInfoModel.isPhoneValid() && orderInfoModel.isEmailValid();
-  contactsForm.render({ valid });
 });
 
 events.on('contactsform:email', (data: TStringValue) => {
   orderInfoModel.email = data.value;
-  
-  const valid = orderInfoModel.isPhoneValid() && orderInfoModel.isEmailValid();
-  contactsForm.render({ valid });
 });
   
 events.on('contactsform:pay', (data) => {
@@ -163,25 +177,4 @@ events.on('order:success', (data) => {
 
 events.on('basket:delete', (data: TProductId) => {
   basketModel.delete(data.id);
-  setBasketListContent();
 });
-
-function setBasketListContent() {
-  const products: HTMLElement[] = [];
-  let index: number = 1;
-  let totalPrice = 0;
-  
-  basketModel.items.forEach(item => {
-    const basketItem = new BasketItem(productBasketTemplate, events);
-  
-    const product: IProduct = productListModel.getById(item);
-  
-    if (product.price) {
-      totalPrice += product.price;
-    }
-  
-    products.push(basketItem.render(product, index++));
-  });  
-  
-  modal.content = basketList.render(products, totalPrice);
-}

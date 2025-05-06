@@ -39,6 +39,11 @@ export class ContactsForm {
     this.submit.disabled = !value;
   }
 
+  clear() {
+    this.email.value = "";
+    this.phone.value = "";
+  }
+
   render(state: TFormState) {
     const { valid } = state;
     this.valid = valid;

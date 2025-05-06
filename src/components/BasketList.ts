@@ -24,9 +24,14 @@ export class BasketList {
     }
   }
 
-  render(items: HTMLElement[], totalPrice: number) {
-    this.price.textContent = `${totalPrice.toString()} синапсов`;
-    this.list.replaceChildren(...items);
+  render(items?: HTMLElement[], totalPrice?: number) {
+    if (totalPrice) {
+      this.price.textContent = `${totalPrice.toString()} синапсов`;
+    }
+
+    if (items) {
+      this.list.replaceChildren(...items);
+    }
 
     return this.element;
 }
