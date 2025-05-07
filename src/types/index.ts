@@ -4,7 +4,7 @@ export interface IProduct {
   image: string;
   title: string;
   category: string;
-  price: number;
+  price: number | null;
 }
 
 export interface IProductList {
@@ -38,4 +38,5 @@ export type TStringValue = {
 
 export type TFormState = {
   valid: boolean;
+  errors: string | null;
 }

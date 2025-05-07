@@ -9,11 +9,13 @@ export class OrderForm {
   protected cash: HTMLButtonElement;
   protected address: HTMLInputElement;
   protected submit: HTMLButtonElement;
+  protected _errors: HTMLElement;
 
   constructor(template: HTMLTemplateElement, events: IEvents) {
     this.events = events;
     this.element = cloneTemplate(template);
     
+    this._errors = this.element.querySelector('.form__errors');
     this.card = this.element.querySelector('button[name=card]');
     this.cash = this.element.querySelector('button[name=cash]');
 
@@ -45,6 +47,10 @@ export class OrderForm {
 
   }
 
+  set errors(value: string) {
+    this._errors.textContent = value;
+  }
+
   set valid(value: boolean) {
     this.submit.disabled = !value;
   }
@@ -64,12 +70,14 @@ export class OrderForm {
     this.cash.classList.remove('button_alt-active');
     this.card.classList.remove('button_alt-active');
     this.address.value = "";
+    this.errors = null;
   }
 
   render(state: TFormState, payment: string) {
-    const { valid } = state;
+    const { valid, errors } = state;
+  
     this.valid = valid;
-
+    this.errors = errors;
     this.payment = payment;
 
     return this.element;

@@ -103,15 +103,29 @@ events.on('basket:order', (data) => {
   orderInfoModel.clear();
   orderForm.clear();
 
-  modal.content = orderForm.render({ valid: false }, '');
+  modal.content = orderForm.render({ valid: false, errors: null }, '');
 });
 
 events.on('orderinfomodel:change', (data) => {
   let valid = orderInfoModel.isAddressValid() && orderInfoModel.isPaymentValid();
-  orderForm.render({ valid }, orderInfoModel.payment);
+  let errors = null;
+  
+  if (!orderInfoModel.isAddressValid()) { 
+    errors = 'Введите адрес доставки';
+  }
+
+  orderForm.render({ valid, errors }, orderInfoModel.payment);
+
+  if (!orderInfoModel.isPhoneValid()) {
+    errors = 'Введите ваш номер телефона';
+  }
+
+  if (!orderInfoModel.isEmailValid()) {
+    errors = 'Введите вашу электронную почту';
+  }
 
   valid = orderInfoModel.isPhoneValid() && orderInfoModel.isEmailValid();
-  contactsForm.render({ valid });
+  contactsForm.render({ valid, errors });
 });
 
 events.on('orderform:cash', (data) => {
@@ -128,7 +142,7 @@ events.on('orderform:address', (data: TStringValue) => {
 
 events.on('orderform:next', (data) => {
   contactsForm.clear();
-  modal.content = contactsForm.render({ valid: false });
+  modal.content = contactsForm.render({ valid: false, errors: null });
 });
 
 events.on('contactsform:phone', (data: TStringValue) => {

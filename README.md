@@ -46,20 +46,20 @@ yarn build
 Продукт
 
 ```
-export interface IProduct {
+interface IProduct {
   id: string;
   description: string;
   image: string;
   title: string;
   category: string;
-  price: number;
+  price: number | null;
 }
 ```
 
 Список продуктов
 
 ```
-export interface IProductList {
+interface IProductList {
   items: IProduct[];
 }
 ```
@@ -67,7 +67,7 @@ export interface IProductList {
 Заказ
 
 ```
-export interface IOrder {
+interface IOrder {
   payment: string;
   email: string;
   phone: string;
@@ -80,7 +80,7 @@ export interface IOrder {
 Результат заказа (ответ от сервера)
 
 ```
-export interface IOrderResult {
+interface IOrderResult {
   id?: string;
   total?: number;
   error?: string;
@@ -90,14 +90,15 @@ export interface IOrderResult {
 Информация о заказе
 
 ```
-export type TOrderInfo = Pick<IOrder, 'payment' | 'email' | 'phone' | 'address'>;
+type TOrderInfo = Pick<IOrder, 'payment' | 'email' | 'phone' | 'address'>;
 ```
 
 Состояние формы
 
 ```
-export type TFormState = {
+type TFormState = {
   valid: boolean;
+  errors: string | null;
 }
 ```
 
@@ -116,6 +117,7 @@ export type TFormState = {
 
 - 'get' - Выполняет GET запрос на переданный в параметрах ендпоинт и возвращает промис с объектом, которым ответил сервер
 - 'post' - принимает объект с данными, которые будут переданы в JSON в теле запроса, и отправляет эти данные на ендпоинт, переданный как параметр, при вызове метода. По умолчанию, выполняется 'POST' запрос, но метод запроса может быть  перееопределён  заданием третьего параметра при вызове.
+- 'handleResponse' - принимает в качестве параметра ответ от функции fetch, анализирует ответ и если он имеет код 200, то возвращает Promise с объектом, который вернул сервер. 
 
 #### Класс EventEmitter
 Брокер событий позволяет отправлять события и подписываться на события, происходящие в системе. Класс используется в презентере для обработки событий и в слоях приложения для генерации событий.
@@ -176,10 +178,10 @@ export type TFormState = {
 Так же класс предоставляет набор методов для взаимодействия с этими данными:
 
 - 'clear()' - Очищает данные во всех полях класса
-- 'isPaymentValid(): boolean' - Проверяет правильное ли знаечение записанов поле _payment
-- 'isPhoneValid(): boolean' - Проверяет правильное ли знаечение записанов поле _phone
-- 'isEmailValid(): boolean' - Проверяет правильное ли знаечение записанов поле _email
-- 'isAddressValid(): boolean' - Проверяет правильное ли знаечение записанов поле _address
+- 'isPaymentValid(): boolean' - Проверяет правильное ли значение записанов поле _payment
+- 'isPhoneValid(): boolean' - Проверяет правильное ли значение записанов поле _phone
+- 'isEmailValid(): boolean' - Проверяет правильное ли значение записанов поле _email
+- 'isAddressValid(): boolean' - Проверяет правильное ли значение записанов поле _address
 - 'payment' - возвращает значение поля payment
 - 'address' - возвращает значение поля address
 - 'email' - возвращает значение поля email

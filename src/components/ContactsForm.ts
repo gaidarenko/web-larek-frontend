@@ -8,10 +8,13 @@ export class ContactsForm {
   protected email: HTMLInputElement;
   protected phone: HTMLInputElement;
   protected submit: HTMLButtonElement;
+  protected _errors: HTMLElement;
 
   constructor(template: HTMLTemplateElement, events: IEvents) {
     this.events = events;
     this.element = cloneTemplate(template);
+
+    this._errors = this.element.querySelector('.form__errors');
 
     this.phone = this.element.querySelector('input[name=phone]');
     this.phone.addEventListener('input', (evt) => {
@@ -39,14 +42,22 @@ export class ContactsForm {
     this.submit.disabled = !value;
   }
 
+  set errors(value: string) {
+    this._errors.textContent = value;
+  }
+
   clear() {
     this.email.value = "";
     this.phone.value = "";
+    this.errors = null;
   }
 
   render(state: TFormState) {
-    const { valid } = state;
+    const { valid, errors } = state;
+
     this.valid = valid;
+    this.errors = errors;
+
     return this.element;
   }
 
