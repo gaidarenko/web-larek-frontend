@@ -103,7 +103,7 @@ events.on('basket:order', (data) => {
   orderInfoModel.clear();
   orderForm.clear();
 
-  modal.content = orderForm.render({ valid: false, errors: null }, '');
+  modal.content = orderForm.render({ valid: false, errors: null } );
 });
 
 events.on('orderinfomodel:change', (data) => {
@@ -114,7 +114,7 @@ events.on('orderinfomodel:change', (data) => {
     errors = 'Введите адрес доставки';
   }
 
-  orderForm.render({ valid, errors }, orderInfoModel.payment);
+  orderForm.render({ valid, errors, payment: orderInfoModel.payment });
 
   if (!orderInfoModel.isPhoneValid()) {
     errors = 'Введите ваш номер телефона';
@@ -136,24 +136,24 @@ events.on('orderform:card', (data) => {
   orderInfoModel.payment = 'online';
 });
 
-events.on('orderform:address', (data: TStringValue) => {
+events.on('order.address:change', (data: TStringValue) => {
   orderInfoModel.address = data.value;
 });
 
-events.on('orderform:next', (data) => {
+events.on('order:submit', (data) => {
   contactsForm.clear();
   modal.content = contactsForm.render({ valid: false, errors: null });
 });
 
-events.on('contactsform:phone', (data: TStringValue) => {
+events.on('contacts.phone:change', (data: TStringValue) => {
   orderInfoModel.phone = data.value;
 });
 
-events.on('contactsform:email', (data: TStringValue) => {
+events.on('contacts.email:change', (data: TStringValue) => {
   orderInfoModel.email = data.value;
 });
   
-events.on('contactsform:pay', (data) => {
+events.on('contacts:submit', (data) => {
   const order: IOrder = {
     payment: orderInfoModel.payment,
     email: orderInfoModel.email,

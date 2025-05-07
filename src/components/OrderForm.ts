@@ -1,58 +1,29 @@
-import { TFormState } from "../types";
-import { cloneTemplate } from "../utils/utils";
+import { Form } from "./base/Form";
 import { IEvents } from "./base/events";
 
-export class OrderForm {
-  protected element: HTMLElement;
-  protected events: IEvents;
+interface IOrderFormData {
+  payment: string;
+}
+
+export class OrderForm extends Form<IOrderFormData>{
   protected card: HTMLButtonElement;
   protected cash: HTMLButtonElement;
-  protected address: HTMLInputElement;
-  protected submit: HTMLButtonElement;
-  protected _errors: HTMLElement;
 
   constructor(template: HTMLTemplateElement, events: IEvents) {
-    this.events = events;
-    this.element = cloneTemplate(template);
+    super(template, events);
     
-    this._errors = this.element.querySelector('.form__errors');
-    this.card = this.element.querySelector('button[name=card]');
-    this.cash = this.element.querySelector('button[name=cash]');
+    this.card = this.container.querySelector('button[name=card]');
+    this.cash = this.container.querySelector('button[name=cash]');
 
     this.card.addEventListener('click', (evt) => {
       evt.stopPropagation();
-
       this.events.emit('orderform:card');
     });
   
     this.cash.addEventListener('click', (evt) => {
       evt.stopPropagation();
-
       this.events.emit('orderform:cash');
     });
-
-    this.address = this.element.querySelector('input[name=address]');
-
-    this.address.addEventListener('input', (evt) => {
-      const target = evt.target as HTMLInputElement;
-      this.events.emit('orderform:address', { value: target.value });
-    });
-
-    this.submit = this.element.querySelector('.order__button');
-
-    this.submit.addEventListener('click', (evt) => {
-      evt.preventDefault();
-      this.events.emit('orderform:next');
-    });
-
-  }
-
-  set errors(value: string) {
-    this._errors.textContent = value;
-  }
-
-  set valid(value: boolean) {
-    this.submit.disabled = !value;
   }
 
   set payment(value: string) {
@@ -67,20 +38,8 @@ export class OrderForm {
   }
 
   clear() {
+    super.clear();
     this.cash.classList.remove('button_alt-active');
     this.card.classList.remove('button_alt-active');
-    this.address.value = "";
-    this.errors = null;
   }
-
-  render(state: TFormState, payment: string) {
-    const { valid, errors } = state;
-  
-    this.valid = valid;
-    this.errors = errors;
-    this.payment = payment;
-
-    return this.element;
-  }
-
 }
