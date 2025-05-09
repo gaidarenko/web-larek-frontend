@@ -13,11 +13,13 @@ export class Product {
   protected element: HTMLElement;
   protected events: IEvents;
   protected productId: string;
-  protected button: HTMLButtonElement;
+  protected buttonAdd: HTMLButtonElement;
+  protected buttonDelete: HTMLButtonElement;
   protected title: HTMLElement;
   protected category: HTMLElement;
   protected price: HTMLElement;
   protected text: HTMLElement;
+  protected index: HTMLElement;
   protected image: HTMLImageElement;
 
 
@@ -25,33 +27,50 @@ export class Product {
     this.events = events;
     this.element = cloneTemplate(template);
     
+    this.index = this.element.querySelector('.basket__item-index');
     this.text = this.element.querySelector('.card__text');
     this.title = this.element.querySelector('.card__title');
     this.image = this.element.querySelector('.card__image');
     this.price = this.element.querySelector('.card__price');
     this.category = this.element.querySelector('.card__category');
-    this.button = this.element.querySelector('.card__button');
+    this.buttonAdd = this.element.querySelector('.button.card__button');
+    this.buttonDelete = this.element.querySelector('.basket__item-delete');
 
-    if (this.button) {
-      this.button.addEventListener('click', (evt) => {
+    if (this.buttonDelete) {
+      this.buttonDelete.addEventListener('click', (evt) => {
+        evt.stopPropagation();
+        this.events.emit('basket:delete', { id: this.productId });
+      });
+    }
+
+    if (this.buttonAdd) {
+      this.buttonAdd.addEventListener('click', (evt) => {
         evt.stopPropagation();
         this.events.emit('product:add', { id: this.productId });
       });
     }
 
-    this.element.addEventListener('click', (evt) => {
-      evt.stopPropagation();
-      this.events.emit('product:click', { id: this.productId });
-    });
+    if (this.element.classList.contains('gallery__item')) {
+      this.element.addEventListener('click', (evt) => {
+        evt.stopPropagation();
+        this.events.emit('product:click', { id: this.productId });
+      });
+    }
   }
+  
 
-  render(data: IProduct, canAdd?: boolean) {
-    if (this.button) {
-      this.button.disabled = !canAdd;
+  render(data: IProduct, canAdd?: boolean, index?: number) {
+
+    if (this.index && index) {
+      this.index.textContent = index.toString();
+    }
+
+    if (this.buttonAdd) {
+      this.buttonAdd.disabled = !canAdd;
     }
 
     if (this.text) {
-        this.text.textContent = data.description;
+      this.text.textContent = data.description;
     }
 
     this.title.textContent = data.title;

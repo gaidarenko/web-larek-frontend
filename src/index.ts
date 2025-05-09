@@ -9,7 +9,6 @@ import { Modal } from './components/Modal';
 import { LarekApi } from './components/LarekApi';
 import { Basket } from './components/Basket';
 import { BasketList } from './components/BasketList';
-import { BasketItem } from './components/BasketItem';
 import { OrderForm } from './components/OrderForm';
 import { ContactsForm } from './components/ContactsForm';
 import { Success } from './components/Success';
@@ -81,14 +80,14 @@ events.on('basket:change', (data) => {
   let totalPrice = 0;
   
   basketModel.items.forEach(item => {
-    const basketItem = new BasketItem(productBasketTemplate, events);
+    const basketItem = new Product(productBasketTemplate, events);
     const product: IProduct = productListModel.getById(item);
   
     if (product.price) {
       totalPrice += product.price;
     }
   
-    products.push(basketItem.render(product, index++));
+    products.push(basketItem.render(product, false, index++));
   });  
   
   basketList.render(products, totalPrice);
