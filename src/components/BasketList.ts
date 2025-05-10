@@ -25,12 +25,13 @@ export class BasketList {
   }
 
   render(items?: HTMLElement[], totalPrice?: number) {
-    if (totalPrice) {
-      this.price.textContent = `${totalPrice.toString()} синапсов`;
-    }
 
+    console.log(`BasketList::render items=${items}`);
+    
     if (items) {
+      this.price.textContent = totalPrice ? `${totalPrice.toString()} синапсов` : '';
       this.list.replaceChildren(...items);
+      this.button.disabled = !items.length ? true : false;
     }
 
     return this.element;

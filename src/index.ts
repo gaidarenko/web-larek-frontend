@@ -40,6 +40,7 @@ const basketList = new BasketList(basketTemplate, events);
 const gallery = new ProductGallery(document.querySelector('.gallery'));
 const modal = new Modal(document.querySelector('#modal-basket'));
 
+
 // Получаем лоты с сервера
 api.getProductList()
   .then(result => {
@@ -191,3 +192,6 @@ events.on('order:success', (data) => {
 events.on('basket:delete', (data: TProductId) => {
   basketModel.delete(data.id);
 });
+
+// Заставим список продуктов в корзине перерисоваться
+basketModel.clear();
